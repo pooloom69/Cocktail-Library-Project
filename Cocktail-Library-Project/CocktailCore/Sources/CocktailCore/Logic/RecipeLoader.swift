@@ -12,21 +12,21 @@ public struct RecipeLoader {
     public static func loadDefaultRecipes() -> [Recipe] {
         var loaded: [Recipe] = []
 
-//        print("📦 Bundle.module.bundlePath =", Bundle.module.bundlePath)
-//        print("📦 Bundle.module.resourcePath =", Bundle.module.resourcePath ?? "nil")
+//        print(" Bundle.module.bundlePath =", Bundle.module.bundlePath)
+//        print(" Bundle.module.resourcePath =", Bundle.module.resourcePath ?? "nil")
 
 
         if let resourcePath = Bundle.module.resourcePath {
             do {
                 let contents = try FileManager.default.contentsOfDirectory(atPath: resourcePath)
-                //print("📁 Bundle contents:", contents)
+                //print(" Bundle contents:", contents)
             } catch {
-                print("⚠️ Failed to list bundle contents:", error)
+                print(" Failed to list bundle contents:", error)
             }
         }
 
         if let urls = Bundle.module.urls(forResourcesWithExtension: "json", subdirectory: nil) {
-            //print("📦 Found \(urls.count) JSON files in package:")
+            //print(" Found \(urls.count) JSON files in package:")
             urls.forEach { print(" - \($0.lastPathComponent)") }
 
             for url in urls {
@@ -40,10 +40,10 @@ public struct RecipeLoader {
                 }
             }
         } else {
-            print("❌ No JSON files found in Bundle.module/Data")
+            print(" No JSON files found in Bundle.module/Data")
         }
 
-        print("➡️ Total recipes loaded:", loaded.count)
+        print(" Total recipes loaded:", loaded.count)
         return loaded
     }
 }
