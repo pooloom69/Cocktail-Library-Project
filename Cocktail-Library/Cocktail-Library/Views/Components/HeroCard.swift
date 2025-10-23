@@ -1,5 +1,5 @@
 import SwiftUI
-
+import CocktailCore
 
 struct HeroCard: View {
     @EnvironmentObject var store: RecipeStore
@@ -25,7 +25,7 @@ struct HeroCard: View {
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 
-                Text(recipe.flavors.joined(separator: ", ")) // show all flavors
+                Text(recipe.flavor.joined(separator: ", ")) // show all flavors
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -43,7 +43,7 @@ struct HeroCard_Previews: PreviewProvider {
             name: "Preview Cocktail",
             base: "Gin",
             style: "Classic",
-            flavors: ["Sweet", "Citrus"],
+            flavor: ["Sweet", "Citrus"],
             abv: 12.0,
             ice: "Shaken with ice",
             ingredients: [

@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		2309C14E2EA73053003CDA58 /* CocktailCore in Frameworks */ = {isa = PBXBuildFile; productRef = 2309C14D2EA73053003CDA58 /* CocktailCore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		232BDBFA2E71F22500D117E0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2309C14E2EA73053003CDA58 /* CocktailCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,12 +77,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2309C14C2EA73053003CDA58 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		232BDBE32E71F22400D117E0 = {
 			isa = PBXGroup;
 			children = (
 				232BDBEE2E71F22400D117E0 /* Cocktail-Library */,
 				232BDBFC2E71F22500D117E0 /* Cocktail-LibraryTests */,
 				232BDC062E71F22500D117E0 /* Cocktail-LibraryUITests */,
+				2309C14C2EA73053003CDA58 /* Frameworks */,
 				232BDBED2E71F22400D117E0 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -112,6 +125,7 @@
 			);
 			name = "Cocktail-Library";
 			packageProductDependencies = (
+				2309C14D2EA73053003CDA58 /* CocktailCore */,
 			);
 			productName = "Cocktail-Library";
 			productReference = 232BDBEC2E71F22400D117E0 /* Cocktail-Library.app */;
@@ -195,6 +209,9 @@
 			);
 			mainGroup = 232BDBE32E71F22400D117E0;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2309C14B2EA73050003CDA58 /* XCLocalSwiftPackageReference "../CocktailCore" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 232BDBED2E71F22400D117E0 /* Products */;
 			projectDirPath = "";
@@ -558,6 +575,21 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		2309C14B2EA73050003CDA58 /* XCLocalSwiftPackageReference "../CocktailCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../CocktailCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2309C14D2EA73053003CDA58 /* CocktailCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2309C14B2EA73050003CDA58 /* XCLocalSwiftPackageReference "../CocktailCore" */;
+			productName = CocktailCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 232BDBE42E71F22400D117E0 /* Project object */;
 }

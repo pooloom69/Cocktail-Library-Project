@@ -10,93 +10,94 @@ import CocktailCore
 
 struct RecipeDetailView: View {
     let recipe: Recipe
-
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 Text(recipe.name)
                     .font(.largeTitle)
                     .bold()
-
+                
                 HStack {
                     Text("Base: \(recipe.base)")
                     Spacer()
                     Text("Style: \(recipe.style)")
                 }
                 .font(.headline)
-
+                
                 // Flavor tags
                 if !recipe.flavor.isEmpty {
                     Text("Flavors")
                         .font(.headline)
-                    HStack {
-                        ForEach(recipe.flavor, id: \.self) { flavor in
-                            Text(flavor.capitalized)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 4)
-                                .background(Color.orange.opacity(0.2))
-                                .cornerRadius(8)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(recipe.flavor, id: \.self) { flavor in
+                                Text(flavor.capitalized)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 4)
+                                    .background(Color.orange.opacity(0.2))
+                                    .cornerRadius(8)
+                            }
                         }
                     }
-                }
-
-                // Ingredients
-                if !recipe.ingredients.isEmpty {
-                    Text("Ingredients")
-                        .font(.headline)
-                    ForEach(recipe.ingredients, id: \.id) { ing in
-                        Text("• \(ing.amount, specifier: "%.1f") \(ing.unit) \(ing.name)")
+                    // Ingredients
+                    if !recipe.ingredients.isEmpty {
+                        Text("Ingredients")
+                            .font(.headline)
+                        ForEach(recipe.ingredients, id: \.id) { ing in
+                            Text("• \(ing.amount, specifier: "%.1f") \(ing.unit) \(ing.name)")
+                        }
                     }
-                }
-
-                // Steps
-                if !recipe.steps.isEmpty {
-                    Text("Steps")
-                        .font(.headline)
-                    ForEach(recipe.steps, id: \.self) { step in
-                        Text(step)
-                            .padding(.vertical, 2)
+                    
+                    // Steps
+                    if !recipe.steps.isEmpty {
+                        Text("Steps")
+                            .font(.headline)
+                        ForEach(recipe.steps, id: \.self) { step in
+                            Text(step)
+                                .padding(.vertical, 2)
+                        }
                     }
+                    
+                    if !recipe.garnish.isEmpty {
+                        Text("Garnish")
+                            .font(.headline)
+                        Text(recipe.garnish.joined(separator: ", "))
+                    }
+                    
+                    Spacer()
                 }
-
-                if !recipe.garnish.isEmpty {
-                    Text("Garnish")
-                        .font(.headline)
-                    Text(recipe.garnish.joined(separator: ", "))
-                }
-
-                Spacer()
+                
             }
-            .padding()
+            .navigationTitle(recipe.name)
+            .navigationBarTitleDisplayMode(.inline)
         }
-        .navigationTitle(recipe.name)
-        .navigationBarTitleDisplayMode(.inline)
+        .padding()
+    }
+    
+    struct RecipeDetailView_Previews: PreviewProvider {
+        static var previews: some View {
+            NavigationView {
+                RecipeDetailView(recipe: Recipe(
+                    name: "Sample Negroni",
+                    base: "Gin",
+                    style: "Classic",
+                    flavor: ["bitter", "sweet"],
+                    abv: 0.25,
+                    ice: "Build over ice",
+                    ingredients: [
+                        Ingredient(name: "Gin", amount: 1.0, unit: "oz"),
+                        Ingredient(name: "Campari", amount: 1.0, unit: "oz"),
+                        Ingredient(name: "Sweet Vermouth", amount: 1.0, unit: "oz")
+                    ],
+                    steps: ["Stir all ingredients with ice", "Strain into glass"],
+                    glass: "Rocks glass",
+                    garnish: ["Orange peel"]
+                ))
+            }
+        }
     }
 }
-
-struct RecipeDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
-            RecipeDetailView(recipe: Recipe(
-                name: "Sample Negroni",
-                base: "Gin",
-                style: "Classic",
-                flavor: ["bitter", "sweet"],
-                abv: 0.25,
-                ice: "Build over ice",
-                ingredients: [
-                    Ingredient(name: "Gin", amount: 1.0, unit: "oz"),
-                    Ingredient(name: "Campari", amount: 1.0, unit: "oz"),
-                    Ingredient(name: "Sweet Vermouth", amount: 1.0, unit: "oz")
-                ],
-                steps: ["Stir all ingredients with ice", "Strain into glass"],
-                glass: "Rocks glass",
-                garnish: ["Orange peel"]
-            ))
-        }
-    }
-}
-
 //struct RecipeDetailView: View {
 //    let recipe: Recipe   
 //    

@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+import CocktailCore
 
 struct CreateNew: View {
     @State private var recipeName = ""
@@ -15,62 +15,55 @@ struct CreateNew: View {
     @State private var selectedFlavors: Set<String> = []
     @State private var instructions = ""
     @State private var recipeIngredients: [Ingredient] = [
-        Ingredient(name: "", amount: 0.0, unit: "oz")]
-    
+        Ingredient(name: "", amount: 0.0, unit: "oz")
+    ]
+
     @EnvironmentObject var store: RecipeStore
-    
+    @Environment(\.dismiss) var dismiss
+
+    // MARK: - Constants
     let units = ["oz", "ml", "dash", "slice", "bar spoon"]
     let ingredientsList = ["Lime", "Sugar", "Mint", "Soda", "Triple Sec", "Bitters"]
-    
     let bases = ["Gin", "Vodka", "Rum", "Whiskey", "Tequila", "Brandy", "Mezcal", "Sake", "Soju"]
-    let styles = ["Classic","Spritz", "Highball", "Martini", "Old Fashioned", "Tiki"]
+    let styles = ["Classic", "Spritz", "Highball", "Martini", "Old Fashioned", "Tiki"]
     let flavors = ["Sweet", "Bitter", "Sour", "Fruity", "Spicy"]
-    let ingredients = ["Lime", "Sugar", "Mint", "Soda", "Triple Sec", "Bitters"]
-    
-    
+
     var body: some View {
-        VStack{
+        NavigationStack {
             ScrollView {
-                
-                VStack(alignment: .leading, spacing: 5) {
+                VStack(alignment: .leading, spacing: 20) {
                     
-                    // Title
+                    // MARK: - Title
                     Text("Create Your Own Recipe")
                         .font(.title)
                         .bold()
                         .padding(.top)
-                        .padding()
-                    
-                    
-                    //  Recipe Name
-                    HStack {
-                        Text("Recipe :")
+
+                    // MARK: - Recipe Name
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Recipe Name")
                             .font(.headline)
-                            .padding()
+                            .padding(.top)
                         TextField("Enter recipe name", text: $recipeName)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                     }
-                    .padding(.horizontal)
-                    
-                    //  Base Spirit
-                    HStack {
-                        Text("Base :")
+
+                    // MARK: - Base Spirit
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Base Spirit")
                             .font(.headline)
-                            .padding()
                         Picker("Select Base", selection: $selectedBase) {
                             ForEach(bases, id: \.self) { base in
                                 Text(base).tag(base)
                             }
                         }
-                        .pickerStyle(.menu) // dropdown
+                        .pickerStyle(.menu)
                     }
-                    .padding(.horizontal)
-                    
-                    //  Style
-                    HStack {
-                        Text("Style :")
+
+                    // MARK: - Style
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Style")
                             .font(.headline)
-                            .padding()
                         Picker("Select Style", selection: $selectedStyle) {
                             ForEach(styles, id: \.self) { style in
                                 Text(style).tag(style)
@@ -78,131 +71,149 @@ struct CreateNew: View {
                         }
                         .pickerStyle(.menu)
                     }
-                    .padding(.horizontal)
-                    
-                    //  Flavor Tags
-                    Text("Flavors")
-                        .font(.headline)
-                        .padding(.horizontal)
-                        .padding()
-                    
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 5) {
-                            ForEach(flavors, id: \.self) { flavor in
-                                Button(action: {
-                                    if selectedFlavors.contains(flavor) {
-                                        selectedFlavors.remove(flavor)
-                                    } else {
-                                        selectedFlavors.insert(flavor)
+
+                    // MARK: - Flavor Tags
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Flavors")
+                            .font(.headline)
+
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(flavors, id: \.self) { flavor in
+                                    Button {
+                                        if selectedFlavors.contains(flavor) {
+                                            selectedFlavors.remove(flavor)
+                                        } else {
+                                            selectedFlavors.insert(flavor)
+                                        }
+                                    } label: {
+                                        Text(flavor)
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 6)
+                                            .background(selectedFlavors.contains(flavor)
+                                                        ? Color.orange
+                                                        : Color.gray.opacity(0.2))
+                                            .foregroundColor(selectedFlavors.contains(flavor) ? .white : .black)
+                                            .cornerRadius(12)
                                     }
-                                }) {
-                                    Text(flavor)
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 6)
-                                        .background(selectedFlavors.contains(flavor) ? Color.orange : Color.gray.opacity(0.2))
-                                        .foregroundColor(selectedFlavors.contains(flavor) ? .white : .black)
-                                        .cornerRadius(12)
                                 }
                             }
+                            .padding(.vertical, 5)
                         }
-                        .padding(.horizontal)
-                        
                     }
-                    .frame(height: 60)
-                    
-                    //  Ingredients
+
+                    // MARK: - Ingredients Section
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Ingredients")
                             .font(.headline)
-                            .padding(.horizontal)
-                        
+
                         ForEach($recipeIngredients) { $ingredient in
                             HStack {
-                                // Ingredient name (first)
-                                HStack {
-                                    // Ingredient name (text field)
-                                    TextField("Ingredient", text: $ingredient.name)
-                                        .textFieldStyle(RoundedBorderTextFieldStyle())
-
-                                    // Quick pick menu
-                                    Menu {
-                                        ForEach(ingredientsList, id: \.self) { ing in
-                                            Button(ing) { ingredient.name = ing }
-                                        }
-                                    } label: {
-                                        Image(systemName: "chevron.down.circle")
-                                            .foregroundColor(.blue)
-                                    }
-                                }
-
-                                // Amount (second)
-                                TextField("Amount", value: $ingredient.amount, format: .number)
-                                    .keyboardType(.decimalPad)
-                                    .frame(width: 60)
+                                // Ingredient name
+                                TextField("Ingredient", text: $ingredient.name)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
 
+                                // Quick pick menu
+                                Menu {
+                                    ForEach(ingredientsList, id: \.self) { ing in
+                                        Button(ing) { ingredient.name = ing }
+                                    }
+                                } label: {
+                                    Image(systemName: "chevron.down.circle")
+                                        .foregroundColor(.blue)
+                                }
 
-                                // Unit picker (third)
+                                // Amount
+                                TextField("Amt", value: $ingredient.amount, format: .number)
+                                    .keyboardType(.decimalPad)
+                                    .frame(width: 55)
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+
+                                // Unit
                                 Picker("Unit", selection: $ingredient.unit) {
                                     ForEach(units, id: \.self) { unit in
                                         Text(unit).tag(unit)
                                     }
                                 }
                                 .pickerStyle(.menu)
-                                .frame(width: 80)
+                                .frame(width: 70)
 
-                                // Delete button (-)
-                                Button(action: {
+                                // Delete button
+                                Button {
                                     if let index = recipeIngredients.firstIndex(where: { $0.id == ingredient.id }) {
                                         recipeIngredients.remove(at: index)
                                     }
-                                }) {
+                                } label: {
                                     Image(systemName: "minus.circle.fill")
                                         .foregroundColor(.gray)
                                 }
                             }
-                            .padding(.horizontal)
                         }
 
-                        
                         // Add new ingredient row
-                        Button(action: {
-                            recipeIngredients.append(Ingredient(name: "", amount: 0.0, unit: "oz", ))
-                        }) {
-                            Label("Add Ingredient", systemImage: "plus")
-                                .padding(.horizontal)
+                        Button {
+                            recipeIngredients.append(Ingredient(name: "", amount: 0.0, unit: "oz"))
+                        } label: {
+                            Label("Add Ingredient", systemImage: "plus.circle.fill")
+                                .foregroundColor(.orange)
                         }
+                        .padding(.top, 4)
                     }
-                    
-                    // etc.. temperature, abv level, carbonation, steps, glass, garnish 
-                    
+
+                    // MARK: - Steps
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Steps")
+                            .font(.headline)
+                        TextEditor(text: $instructions)
+                            .frame(height: 120)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                            )
+                    }
+
+                    // MARK: - Save Button
+                    Button {
+                        saveNewRecipe()
+                    } label: {
+                        Text("Save Recipe")
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.orange)
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                    }
+                    .padding(.vertical)
                 }
-                
-                
-                
-                Button(action: {
-                    print("Recipe saved: \(recipeName)")
-                    // Add your save logic here
-                }) {
-                    Text("Save Recipe")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.orange)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                        .padding(.horizontal)
-                }
+                .padding(.horizontal)
             }
-            .navigationTitle("Create Recipe")
-        }
-    }
-    
-}
-    
-    struct CreateNew_Previews: PreviewProvider {
-        static var previews: some View {
-            CreateNew()
-                .environmentObject(RecipeStore())
         }
     }
 
+    // MARK: - Save Logic
+    private func saveNewRecipe() {
+        let newRecipe = Recipe(
+            id: UUID().uuidString,
+            name: recipeName,
+            base: selectedBase,
+            style: selectedStyle,
+            flavor: Array(selectedFlavors),
+            abv: 0.0,
+            ice: "",
+            ingredients: recipeIngredients,
+            steps: instructions.split(separator: "\n").map(String.init),
+            glass: "",
+            garnish: []
+        )
+
+        store.addUserRecipe(newRecipe)
+        print(" Recipe Saved:", newRecipe.name)
+        dismiss()
+    }
+}
+
+// MARK: - Preview
+#Preview {
+    CreateNew()
+        .environmentObject(RecipeStore())
+}

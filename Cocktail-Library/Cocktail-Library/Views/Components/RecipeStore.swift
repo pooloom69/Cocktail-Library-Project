@@ -1,69 +1,85 @@
-import SwiftUI
+//
+//  RecipeStore.swift
+//  Cocktail-Library
+//
+//  Created by Sola Lhim on 2025-10-20.
+//
 
+import Foundation
+import CocktailCore
 
-class RecipeStore: ObservableObject {
+@MainActor
+final class RecipeStore: ObservableObject {
     // Published arrays so SwiftUI views automatically update when data changes
-    @Published var defaultRecipes: [Recipe] = []   // Preloaded recipes from recipes.json (read-only, bundle)
-    @Published var userRecipes: [Recipe] = []      // User-created recipes from user_recipes.json (read/write, Documents folder)
+    @Published var defaultRecipes: [Recipe] = []   // Read-only, from CocktailCore package
+    @Published var userRecipes: [Recipe] = []      // Read/write, stored in Documents folder
     
     init() {
         // Load both sets of recipes when the app starts
         loadDefaultRecipes()
         loadUserRecipes()
+        
+        // 🧭 Debug info
+        if let url = getUserRecipesURL() {
+            print("📂 User recipe file:", url)
+        }
+        print("📦 Default recipes:", defaultRecipes.count)
+        print("👤 User recipes:", userRecipes.count)
     }
     
-    // MARK: - Load default recipes (from app bundle)
-    // These are packaged with the app and cannot be modified
+    // MARK: - Load default recipes (from CocktailCore package)
     func loadDefaultRecipes() {
-        if let urls = Bundle.main.urls(forResourcesWithExtension: "json", subdirectory: "Data/recipes") {
-            print("Found \(urls.count) JSON files in bundle:")
-            urls.forEach { print(" - \($0.lastPathComponent)") }
-            
-            var loaded: [Recipe] = []
-            for url in urls {
-                do {
-                    let data = try Data(contentsOf: url)
-                    let decoded = try JSONDecoder().decode(Recipe.self, from: data)
-                    loaded.append(decoded)
-                } catch {
-                    print("Failed to decode \(url.lastPathComponent): \(error)")
-                }
-            }
-            defaultRecipes = loaded
-            print("Loaded \(defaultRecipes.count) recipes")
-        } else {
-            print("No recipes found in Data/recipes.")
-        }
+        defaultRecipes = RecipeLoader.loadDefaultRecipes()
+        print("📦 Loaded \(defaultRecipes.count) default recipes from CocktailCore package")
     }
 
-
     // MARK: - Load user recipes (from Documents directory)
-    // These are recipes created or saved by the user, stored persistently
     func loadUserRecipes() {
-        if let url = getUserRecipesURL(),
-           let data = try? Data(contentsOf: url),
-           let decoded = try? JSONDecoder().decode([Recipe].self, from: data) {
+        guard let url = getUserRecipesURL() else { return }
+        
+        do {
+            let data = try Data(contentsOf: url)
+            let decoded = try JSONDecoder().decode([Recipe].self, from: data)
             userRecipes = decoded
+            print("👤 Loaded \(userRecipes.count) user recipes from file.")
+        } catch {
+            print("⚠️ No user recipes found or failed to decode:", error)
+            userRecipes = []
         }
     }
     
     // MARK: - Add a new user recipe
-    // Appends the new recipe to the array and then saves to JSON file
     func addUserRecipe(_ recipe: Recipe) {
         userRecipes.append(recipe)
         saveUserRecipes()
     }
     
-    // MARK: - Save user recipes back to JSON file
-    // Converts the array into JSON and writes to Documents directory
+    // MARK: - Save user recipes to Documents directory
     func saveUserRecipes() {
-        if let url = getUserRecipesURL(),
-           let data = try? JSONEncoder().encode(userRecipes) {
-            try? data.write(to: url)
+        guard let url = getUserRecipesURL() else { return }
+        
+        do {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+            let data = try encoder.encode(userRecipes)
+            try data.write(to: url, options: .atomic)
+            
+            print("💾 Saved \(userRecipes.count) user recipes → \(url.lastPathComponent)")
+            print("📂 File location:", url.path)
+        } catch {
+            print("❌ Failed to save user recipes:", error)
         }
     }
+
+    // MARK: - Delete recipe(s)
+    func deleteUserRecipe(at offsets: IndexSet) {
+        userRecipes.remove(atOffsets: offsets)
+        saveUserRecipes()
+        print("🗑️ Deleted recipe at index:", offsets)
+        print("📊 Remaining user recipes:", userRecipes.count)
+    }
     
-    // MARK: - Helper: Get URL path for user_recipes.json in Documents directory
+    // MARK: - Helper: Path for user_recipes.json
     private func getUserRecipesURL() -> URL? {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
             .first?

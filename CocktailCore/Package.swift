@@ -3,14 +3,29 @@ import PackageDescription
 
 let package = Package(
     name: "CocktailCore",
+    defaultLocalization: "en",
     platforms: [
-        .iOS(.v17), .macOS(.v13)
+        .iOS(.v17),
+        .macOS(.v13)
     ],
     products: [
-        .library(name: "CocktailCore", targets: ["CocktailCore"])
+        .library(
+            name: "CocktailCore",
+            targets: ["CocktailCore"]
+        )
     ],
     targets: [
-        .target(name: "CocktailCore"),
-        .testTarget(name: "CocktailCoreTests", dependencies: ["CocktailCore"])
+        .target(
+            name: "CocktailCore",
+            path: "Sources/CocktailCore",
+            resources: [
+                .process("Data")
+            ]
+        ),
+        .testTarget(
+            name: "CocktailCoreTests",
+            dependencies: ["CocktailCore"],
+            path: "Tests"
+        )
     ]
 )
