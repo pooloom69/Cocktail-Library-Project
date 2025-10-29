@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		2309C14E2EA73053003CDA58 /* CocktailCore in Frameworks */ = {isa = PBXBuildFile; productRef = 2309C14D2EA73053003CDA58 /* CocktailCore */; };
+		23F031342EAF281600FC64FC /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 23F031332EAF281600FC64FC /* FirebaseAuth */; };
+		23F031362EAF281600FC64FC /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 23F031352EAF281600FC64FC /* FirebaseCore */; };
+		23F031382EAF281600FC64FC /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 23F031372EAF281600FC64FC /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +60,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				2309C14E2EA73053003CDA58 /* CocktailCore in Frameworks */,
+				23F031382EAF281600FC64FC /* FirebaseFirestore in Frameworks */,
+				23F031362EAF281600FC64FC /* FirebaseCore in Frameworks */,
+				23F031342EAF281600FC64FC /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -126,6 +132,9 @@
 			name = "Cocktail-Library";
 			packageProductDependencies = (
 				2309C14D2EA73053003CDA58 /* CocktailCore */,
+				23F031332EAF281600FC64FC /* FirebaseAuth */,
+				23F031352EAF281600FC64FC /* FirebaseCore */,
+				23F031372EAF281600FC64FC /* FirebaseFirestore */,
 			);
 			productName = "Cocktail-Library";
 			productReference = 232BDBEC2E71F22400D117E0 /* Cocktail-Library.app */;
@@ -211,6 +220,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				2309C14B2EA73050003CDA58 /* XCLocalSwiftPackageReference "../CocktailCore" */,
+				23F031322EAF281600FC64FC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 232BDBED2E71F22400D117E0 /* Products */;
@@ -583,11 +593,37 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		23F031322EAF281600FC64FC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.4.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		2309C14D2EA73053003CDA58 /* CocktailCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2309C14B2EA73050003CDA58 /* XCLocalSwiftPackageReference "../CocktailCore" */;
 			productName = CocktailCore;
+		};
+		23F031332EAF281600FC64FC /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23F031322EAF281600FC64FC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		23F031352EAF281600FC64FC /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23F031322EAF281600FC64FC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		23F031372EAF281600FC64FC /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23F031322EAF281600FC64FC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -56,9 +56,7 @@ struct LibraryView: View {
                         MyRecipesView(store: store)
 
                     case "Favorite":
-                        Text("Favorite Recipes (coming soon)")
-                            .foregroundColor(.gray)
-                            .padding(.top, 50)
+                        FavoriteRecipesView(store: store)
 
                     case "Popular":
                         Text("Popular Recipes (coming soon)")
@@ -145,7 +143,9 @@ struct MyRecipesView: View {
                         }
                     }
                 }
-                .onDelete(perform: store.deleteUserRecipe)
+                .onDelete { indexSet in
+                    store.deleteUserRecipe(at: indexSet)
+                }
             }
             .listStyle(.insetGrouped)
 
@@ -158,6 +158,51 @@ struct MyRecipesView: View {
         }
     }
 }
+
+
+// MARK: - Favorite Recipes Tab
+struct FavoriteRecipesView: View {
+    @ObservedObject var store: RecipeStore
+
+    var body: some View {
+        if store.favoriteRecipes.isEmpty {
+            VStack(spacing: 12) {
+                Image(systemName: "heart.slash")
+                    .font(.system(size: 40))
+                    .foregroundColor(.gray)
+                Text("No favorite recipes yet.")
+                    .foregroundColor(.gray)
+                    .font(.headline)
+                Text("Tap the ❤️ in a recipe to add it here.")
+                    .foregroundColor(.secondary)
+                    .font(.subheadline)
+            }
+            .padding(.top, 40)
+        } else {
+            List(store.favoriteRecipes) { recipe in
+                NavigationLink {
+                    RecipeDetailView(recipe: recipe)
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(recipe.name)
+                                .font(.headline)
+                            Text(recipe.base)
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
+                        Image(systemName: "heart.fill")
+                            .foregroundColor(.red)
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+            .listStyle(.insetGrouped)
+        }
+    }
+}
+
 
 // MARK: - Search Bar component
 struct LibrarySearchBar: View {

@@ -43,7 +43,7 @@ public struct RecipeLoader {
             print(" No JSON files found in Bundle.module/Data")
         }
 
-        print(" Total recipes loaded:", loaded.count)
+        //print(" Total recipes loaded:", loaded.count)
         return loaded
     }
 }

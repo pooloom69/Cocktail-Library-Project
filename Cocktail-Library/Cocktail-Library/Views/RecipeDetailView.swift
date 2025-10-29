@@ -10,14 +10,26 @@ import CocktailCore
 
 struct RecipeDetailView: View {
     let recipe: Recipe
+    @EnvironmentObject var store: RecipeStore
     
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                Text(recipe.name)
-                    .font(.largeTitle)
-                    .bold()
-                
+                HStack {
+                    Text(recipe.name)
+                        .font(.largeTitle)
+                        .bold()
+                    Spacer()
+                    Button(action: {
+                        store.toggleFavorite(recipe)
+                    }) {
+                        Image(systemName: store.isFavorite(recipe) ? "heart.fill" : "heart")
+                            .foregroundColor(store.isFavorite(recipe) ? .red : .gray)
+                            .font(.title2)
+                    }
+                    .buttonStyle(.plain)
+                }
+
                 HStack {
                     Text("Base: \(recipe.base)")
                     Spacer()
@@ -94,6 +106,7 @@ struct RecipeDetailView: View {
                     glass: "Rocks glass",
                     garnish: ["Orange peel"]
                 ))
+                .environmentObject(RecipeStore())
             }
         }
     }
