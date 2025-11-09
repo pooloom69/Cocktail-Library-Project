@@ -2,11 +2,13 @@ import SwiftUI
 
 struct MainTabView: View {
     var body: some View {
+        
         TabView {
             HomeView()
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
                 }
+
             
             LibraryView()
                 .tabItem {
@@ -23,7 +25,12 @@ struct MainTabView: View {
                     Label("Profile", systemImage: "person.circle.fill")
                 }
         }
+        .tint(AppTheme.highlight)
+        .background(AppTheme.tabBar)
+        
+
     }
+    
 }
 
 
@@ -31,5 +38,7 @@ struct MainTabView_Previews: PreviewProvider {
     static var previews: some View {
         MainTabView()
             .environmentObject(RecipeStore())
+            .environmentObject(UserSession())
     }
 }
+

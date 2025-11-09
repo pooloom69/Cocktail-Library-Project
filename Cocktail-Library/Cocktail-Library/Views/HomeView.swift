@@ -8,9 +8,12 @@ struct HomeView: View {
     @State private var selectedFlavors: Set<String> = []
     @State private var allRecipes: [Recipe] = []
     @State private var recommendations: [RankResult] = []
+    @State private var recipeOfTheDay: Recipe?
+    private let rotd = RandomRecipeOfTheDay()
 
     
     @EnvironmentObject var store: RecipeStore
+    @EnvironmentObject var userSession: UserSession
     
     // MARK: - Constants
     let bases: [String] = VectorOrders.baseOrder
@@ -33,36 +36,73 @@ struct HomeView: View {
             
             ScrollView(.vertical, showsIndicators: true) {
                 VStack(alignment: .leading, spacing: 10) {
-                    // Title
-                    Text("Cocktail Library")
-                        .font(.largeTitle)
-                        .bold()
-                        .padding(.top)
+
+                    HStack {
+                                Text("Cocktail Library")
+                                        .font(AppTheme.titleFont())
+                                          .foregroundColor(AppTheme.textPrimary)
+
+                                Spacer() // pushes user info to the right edge
+
+                            if userSession.currentUser != nil {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "person.crop.circle")
+                                        .foregroundColor(.secondary)
+                                    Text(userSession.username.isEmpty ? "..." : userSession.username)
+                                        .font(.subheadline)
+                                        .foregroundColor(AppTheme.textSecondary)
+                                }
+                            }
+                        }
+                        .padding(.top) // add some space from the top edge
+
                     
                     Text("Today's Pick")
                         .font(.headline)
                         .padding(.top)
+                        .foregroundColor(AppTheme.highlight)
                     
-                    // Banner
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.blue.opacity(0.1))
+                    if let pick = recipeOfTheDay {
+                        NavigationLink(destination: RecipeDetailView(recipe: pick)) {
+                            ZStack(alignment: .bottomLeading) {
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [
+                                                AppTheme.card.opacity(0.9),
+                                                Color.orange.opacity(0.25)
+                                            ]),
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                                    .frame(height: 220)
+                                    .shadow(color: AppTheme.softShadow, radius: 8, y: 3)
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text(pick.name)
+                                        .font(.title2.bold())
+                                        .foregroundColor(AppTheme.textPrimary)
+                                    Text("\(pick.base) • \(pick.style)")
+                                        .font(.subheadline)
+                                        .foregroundColor(AppTheme.textSecondary)
+                                }
+                                .padding()
+                            }
+                            .padding(.horizontal)
+                        }
+                    } else {
+                        ProgressView("Loading recipe of the day...")
                             .frame(height: 200)
-                            .shadow(radius: 3)
+                            .padding(.horizontal)
                     }
-                    
-                    //                Text("Find your Recipe")
-                    //                    .font(.headline)
-                    //                    .padding(.top, 12)
-                    //
-                    // Search Bar
-                    //                SearchBar(text: $searchText)
-                    //                    .padding(.top, 15)
-                    //
-                    // Filters
+
+
                     Group {
                         // Base
-                        Text("Base").font(.headline).padding(.top)
+                        Text("Base")
+                            .font(.headline)
+                            .foregroundColor(AppTheme.highlight)
+                            .padding(.top)
                         ScrollView(.horizontal, showsIndicators: false) {
                             MultiSelectChips(options: bases, selection: $selectedBases)
                                 .padding(.horizontal)
@@ -70,17 +110,24 @@ struct HomeView: View {
                         }
                         
                         // Style
-                        Text("Style").font(.headline).padding(.top)
+                        Text("Style")
+                            .font(.headline)
+                            .foregroundColor(AppTheme.highlight)
+                            .padding(.top)
                         ScrollView(.horizontal, showsIndicators: false) {
                             MultiSelectChips(options: styles, selection: $selectedStyles)
                                 .padding(.horizontal)
                         }
                         
                         // Flavor
-                        Text("Flavor").font(.headline).padding(.top)
+                        Text("Flavor")
+                            .font(.headline)
+                            .foregroundColor(AppTheme.highlight)
+                            .padding(.top)
                         ScrollView(.horizontal, showsIndicators: false) {
                             MultiSelectChips(options: flavors, selection: $selectedFlavors)
                                 .padding(.horizontal)
+                            
                         }
                     }
                     
@@ -88,29 +135,43 @@ struct HomeView: View {
                         destination: RecommendationView(results: recommendations, allRecipes: allRecipes)
                     ) {
                         Text("Match")
-                            .font(.headline)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.orange)
-                            .cornerRadius(12)
+                            .background(AppTheme.accent)
+                            .cornerRadius(14)
+                            .shadow(color: AppTheme.softShadow, radius: 6, y: 3)
                             .padding(.vertical)
-                            .padding(.top)
+                        
                     }
                     .simultaneousGesture(TapGesture().onEnded(runRecommendation))
                     
                 }
                 .padding(.horizontal)
+                
             }
+            .scrollContentBackground(.hidden)
+            .background(AppTheme.background.ignoresSafeArea())
+            .shadow(color: AppTheme.softShadow, radius: 3, y: 1)
+            
             .onAppear {
                 allRecipes = RecipeLoader.loadDefaultRecipes()
                 //print("Loaded \(allRecipes.count) recipes from CocktailCore.")
                 //print("Bases:", bases)
                 //print("Styles:", styles)
                 //print("Flavors:", flavors)
+                
+                // 🧠 Combine user + default recipes
+                let all = store.defaultRecipes + store.userRecipes
+                
+                // 🌟 Load random recipe of the day
+                recipeOfTheDay = rotd.today(from: all)
+                                
             }
         }
+
     }
+
 
     // MARK: - Run Recommendation
     private func runRecommendation() {
@@ -166,5 +227,7 @@ struct SearchBar: View {
 struct HomeViewPreviews: PreviewProvider {
     static var previews: some View {
         HomeView()
+            .environmentObject(UserSession())
+            .environmentObject(RecipeStore())
     }
 }

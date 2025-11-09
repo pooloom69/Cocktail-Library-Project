@@ -11,165 +11,169 @@ import CocktailCore
 struct RecipeDetailView: View {
     let recipe: Recipe
     @EnvironmentObject var store: RecipeStore
-    
+
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                HStack {
-                    Text(recipe.name)
-                        .font(.largeTitle)
-                        .bold()
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 24) {
+                // MARK: - Header
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(recipe.name)
+                            .font(.system(.largeTitle, design: .rounded))
+                            .fontWeight(.semibold)
+                            .foregroundColor(AppTheme.textPrimary)
+                        Text("\(recipe.base) • \(recipe.style)")
+                            .font(.subheadline)
+                            .foregroundColor(AppTheme.textSecondary)
+                    }
                     Spacer()
-                    Button(action: {
+                    Button {
                         store.toggleFavorite(recipe)
-                    }) {
+                    } label: {
                         Image(systemName: store.isFavorite(recipe) ? "heart.fill" : "heart")
-                            .foregroundColor(store.isFavorite(recipe) ? .red : .gray)
+                            .foregroundColor(store.isFavorite(recipe) ? AppTheme.highlight : AppTheme.textSecondary)
                             .font(.title2)
+                            .shadow(color: AppTheme.softShadow, radius: 2, y: 1)
                     }
                     .buttonStyle(.plain)
                 }
+                .padding(.horizontal)
+                .padding(.top, 20)
 
-                HStack {
-                    Text("Base: \(recipe.base)")
-                    Spacer()
-                    Text("Style: \(recipe.style)")
-                }
-                .font(.headline)
-                
-                // Flavor tags
+                // MARK: - Flavor Tags
                 if !recipe.flavor.isEmpty {
-                    Text("Flavors")
-                        .font(.headline)
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(recipe.flavor, id: \.self) { flavor in
-                                Text(flavor.capitalized)
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 4)
-                                    .background(Color.orange.opacity(0.2))
-                                    .cornerRadius(8)
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Flavors")
+                            .font(.headline)
+                            .foregroundColor(AppTheme.highlight)
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 10) {
+                                ForEach(recipe.flavor, id: \.self) { flavor in
+                                    Text(flavor.capitalized)
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 6)
+                                        .background(AppTheme.card)
+                                        .cornerRadius(10)
+                                        .shadow(color: AppTheme.softShadow, radius: 1, y: 1)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .stroke(AppTheme.highlight.opacity(0.3), lineWidth: 1)
+                                        )
+                                        .foregroundColor(AppTheme.textPrimary)
+                                }
+                            }
+                            .padding(.horizontal, 4)
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+
+                // MARK: - Ingredients
+                if !recipe.ingredients.isEmpty {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Ingredients")
+                            .font(.headline)
+                            .foregroundColor(AppTheme.highlight)
+                        ForEach(recipe.ingredients, id: \.id) { ing in
+                            HStack {
+                                Text("•")
+                                    .font(.headline)
+                                    .foregroundColor(AppTheme.textSecondary)
+                                Text("\(ing.amount, specifier: "%.1f") \(ing.unit) \(ing.name)")
+                                    .font(AppTheme.bodyFont())
+                                    .foregroundColor(AppTheme.textPrimary)
                             }
                         }
                     }
-                    // Ingredients
-                    if !recipe.ingredients.isEmpty {
-                        Text("Ingredients")
-                            .font(.headline)
-                        ForEach(recipe.ingredients, id: \.id) { ing in
-                            Text("• \(ing.amount, specifier: "%.1f") \(ing.unit) \(ing.name)")
-                        }
-                    }
-                    
-                    // Steps
-                    if !recipe.steps.isEmpty {
+                    .padding(.horizontal)
+                }
+
+                // MARK: - Steps
+                if !recipe.steps.isEmpty {
+                    VStack(alignment: .leading, spacing: 10) {
                         Text("Steps")
                             .font(.headline)
-                        ForEach(recipe.steps, id: \.self) { step in
-                            Text(step)
-                                .padding(.vertical, 2)
+                            .foregroundColor(AppTheme.highlight)
+                        ForEach(Array(recipe.steps.enumerated()), id: \.offset) { index, step in
+                            HStack(alignment: .top) {
+                                Text("\(index + 1).")
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(AppTheme.textSecondary)
+                                Text(step)
+                                    .font(AppTheme.bodyFont())
+                                    .foregroundColor(AppTheme.textPrimary)
+                            }
+                            .padding(.vertical, 2)
                         }
                     }
-                    
-                    if !recipe.garnish.isEmpty {
+                    .padding(.horizontal)
+                }
+
+                // MARK: - Garnish
+                if !recipe.garnish.isEmpty {
+                    VStack(alignment: .leading, spacing: 10) {
                         Text("Garnish")
                             .font(.headline)
+                            .foregroundColor(AppTheme.highlight)
                         Text(recipe.garnish.joined(separator: ", "))
+                            .font(AppTheme.bodyFont())
+                            .foregroundColor(AppTheme.textPrimary)
                     }
-                    
-                    Spacer()
+                    .padding(.horizontal)
                 }
-                
+
+                // MARK: - Glass & Ice Info (optional)
+                if !recipe.glass.isEmpty || !recipe.ice.isEmpty {
+                    VStack(alignment: .leading, spacing: 10) {
+                        if !recipe.glass.isEmpty {
+                            Text("Glass: \(recipe.glass)")
+                                .font(AppTheme.bodyFont())
+                                .foregroundColor(AppTheme.textSecondary)
+                        }
+                        if !recipe.ice.isEmpty {
+                            Text("Ice: \(recipe.ice)")
+                                .font(AppTheme.bodyFont())
+                                .foregroundColor(AppTheme.textSecondary)
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+
+                Spacer(minLength: 60)
             }
-            .navigationTitle(recipe.name)
-            .navigationBarTitleDisplayMode(.inline)
+            .padding(.bottom, 20)
         }
-        .padding()
-    }
-    
-    struct RecipeDetailView_Previews: PreviewProvider {
-        static var previews: some View {
-            NavigationView {
-                RecipeDetailView(recipe: Recipe(
-                    name: "Sample Negroni",
-                    base: "Gin",
-                    style: "Classic",
-                    flavor: ["bitter", "sweet"],
-                    abv: 0.25,
-                    ice: "Build over ice",
-                    ingredients: [
-                        Ingredient(name: "Gin", amount: 1.0, unit: "oz"),
-                        Ingredient(name: "Campari", amount: 1.0, unit: "oz"),
-                        Ingredient(name: "Sweet Vermouth", amount: 1.0, unit: "oz")
-                    ],
-                    steps: ["Stir all ingredients with ice", "Strain into glass"],
-                    glass: "Rocks glass",
-                    garnish: ["Orange peel"]
-                ))
-                .environmentObject(RecipeStore())
-            }
-        }
+        .background(AppTheme.background.ignoresSafeArea())
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
-//struct RecipeDetailView: View {
-//    let recipe: Recipe   
-//    
-//    var body: some View {
-//        ScrollView {
-//            VStack(alignment: .leading, spacing: 16) {
-//             
-//                Text(recipe.name)
-//                    .font(.largeTitle)
-//                    .bold()
-//                    .padding(.top)
-//
-//    
-//                VStack(alignment: .leading, spacing: 6) {
-//                    Text("Base: \(recipe.base)")
-//                    Text("Style: \(recipe.style)")
-//                    Text(String(format: "ABV: %.1f%%", recipe.abv * 100))
-//                    Text("Glass: \(recipe.glass)")
-//                    Text("Ice: \(recipe.ice)")
-//                }
-//                .font(.subheadline)
-//                .foregroundColor(.secondary)
-//
-//                Divider().padding(.vertical, 8)
-//
-//
-//                VStack(alignment: .leading, spacing: 8) {
-//                    Text("Ingredients")
-//                        .font(.headline)
-//                    ForEach(recipe.ingredients, id: \.name) { ingredient in
-//                        Text("• \(ingredient.amount, specifier: "%.1f") \(ingredient.unit) \(ingredient.name)")
-//                    }
-//                }
-//
-//                Divider().padding(.vertical, 8)
-//
-//  
-//                VStack(alignment: .leading, spacing: 8) {
-//                    Text("Steps")
-//                        .font(.headline)
-//                    ForEach(recipe.steps, id: \.self) { step in
-//                        Text("• \(step)")
-//                    }
-//                }
-//
-//                Divider().padding(.vertical, 8)
-//
-//
-//                VStack(alignment: .leading, spacing: 8) {
-//                    Text("Garnish")
-//                        .font(.headline)
-//                    ForEach(recipe.garnish, id: \.self) { item in
-//                        Text("• \(item)")
-//                    }
-//                }
-//            }
-//            .padding()
-//        }
-//        .navigationTitle(recipe.name)
-//        .navigationBarTitleDisplayMode(.inline)
-//    }
-//}
+
+// MARK: - Preview
+#Preview {
+    NavigationView {
+        RecipeDetailView(
+            recipe: Recipe(
+                id: UUID().uuidString,
+                name: "Sample Negroni",
+                base: "Gin",
+                style: "Classic",
+                flavor: ["bitter", "sweet"],
+                abv: 0.25,
+                ice: "Build over ice",
+                ingredients: [
+                    Ingredient(name: "Gin", amount: 1.0, unit: "oz"),
+                    Ingredient(name: "Campari", amount: 1.0, unit: "oz"),
+                    Ingredient(name: "Sweet Vermouth", amount: 1.0, unit: "oz")
+                ],
+                steps: [
+                    "Stir all ingredients with ice until well chilled.",
+                    "Strain into a rocks glass.",
+                    "Garnish with an orange peel."
+                ],
+                glass: "Rocks glass",
+                garnish: ["Orange peel"]
+            )
+        )
+        .environmentObject(RecipeStore())
+    }
+}

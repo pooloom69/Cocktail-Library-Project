@@ -27,6 +27,7 @@ final class RecipeStore: ObservableObject {
     // MARK: - Init
     init() {
         loadDefaultRecipes()
+//        defaultRecipes = RecipeLoader.loadDefaultRecipes()
     }
 
     // MARK: - Load Data from Firestore
@@ -173,6 +174,38 @@ final class RecipeStore: ObservableObject {
         defaultRecipes = RecipeLoader.loadDefaultRecipes()
         print(" Loaded \(defaultRecipes.count) default recipes.")
     }
+    
+    
+    // MARK: - Firestore Fetch Methods
+        func fetchUserRecipes(from uid: String) {
+            db.collection("users").document(uid).collection("userRecipes").getDocuments { snapshot, error in
+                if let error = error {
+                    print("❌ Failed to fetch user recipes:", error.localizedDescription)
+                    return
+                }
+                guard let documents = snapshot?.documents else { return }
+
+                self.userRecipes = documents.compactMap { doc in
+                    try? doc.data(as: Recipe.self)
+                }
+                print("✅ Loaded \(self.userRecipes.count) user recipes from Firestore.")
+            }
+        }
+
+        func fetchFavorites(from uid: String) {
+            db.collection("users").document(uid).collection("favorites").getDocuments { snapshot, error in
+                if let error = error {
+                    print("❌ Failed to fetch favorites:", error.localizedDescription)
+                    return
+                }
+                guard let documents = snapshot?.documents else { return }
+
+                self.favoriteRecipes = documents.compactMap { doc in
+                    try? doc.data(as: Recipe.self)
+                }
+                print("✅ Loaded \(self.favoriteRecipes.count) favorites from Firestore.")
+            }
+        }
 }
 
 

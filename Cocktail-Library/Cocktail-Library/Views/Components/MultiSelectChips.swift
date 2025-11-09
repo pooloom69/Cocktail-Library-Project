@@ -14,24 +14,30 @@ struct MultiSelectChips: View {
     var body: some View {
         HStack(spacing: 8) {
             ForEach(options, id: \.self) { option in
+                let isSelected = selection.contains(option)
+                
                 Button(action: {
-                    if selection.contains(option) {
+                    if isSelected {
                         selection.remove(option)
                     } else {
                         selection.insert(option)
                     }
                 }) {
                     Text(option)
+                        .font(AppTheme.bodyFont())
                         .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(selection.contains(option) ? Color.orange : Color.gray.opacity(0.2))
-                        .foregroundColor(selection.contains(option) ? .white : .black)
-                        .cornerRadius(12)
+                        .padding(.vertical, 8)
+                        .background(isSelected ? AppTheme.chipSelected : AppTheme.card)
+                        .foregroundColor(AppTheme.textPrimary)
+                        .cornerRadius(10)
+                        .shadow(color: AppTheme.softShadow, radius: isSelected ? 3 : 0, y: 1)
                 }
+                .buttonStyle(.plain)
             }
         }
     }
 }
+
 
 
 struct FlowLayout<Content: View>: View {

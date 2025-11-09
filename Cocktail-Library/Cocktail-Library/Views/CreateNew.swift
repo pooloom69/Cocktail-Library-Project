@@ -19,83 +19,111 @@ struct CreateNew: View {
     ]
 
     @EnvironmentObject var store: RecipeStore
+    @EnvironmentObject var userSession: UserSession
     @Environment(\.dismiss) var dismiss
 
-    // MARK: - Constants
     let units = ["oz", "ml", "dash", "slice", "bar spoon"]
     let ingredientsList = ["Lime", "Sugar", "Mint", "Soda", "Triple Sec", "Bitters"]
-    let bases = ["Gin", "Vodka", "Rum", "Whiskey", "Tequila", "Brandy", "Mezcal", "Sake", "Soju"]
-    let styles = ["Classic", "Spritz", "Highball", "Martini", "Old Fashioned", "Tiki"]
-    let flavors = ["Sweet", "Bitter", "Sour", "Fruity", "Spicy"]
+
+    let bases: [String] = VectorOrders.baseOrder
+        .filter { $0 != "vermouth_fortified" }
+        .map { $0.replacingOccurrences(of: "_", with: " ") }
+        .map { $0.capitalized }
+
+    let styles: [String] = VectorOrders.styleOrder
+        .map { $0.replacingOccurrences(of: "_", with: " ") }
+        .map { $0.capitalized }
+
+    let flavors: [String] = VectorOrders.flavorOrder
+        .map { $0.replacingOccurrences(of: "_", with: " ") }
+        .map { $0.capitalized }
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    
-                    // MARK: - Title
-                    Text("Create Your Own Recipe")
-                        .font(.title)
-                        .bold()
-                        .padding(.top)
+                VStack(alignment: .leading, spacing: 22) {
+                    // MARK: - Header
+                    HStack {
+                        Text("Create Your Own Recipe")
+                            .font(AppTheme.titleFont())
+                            .foregroundColor(AppTheme.textPrimary)
+
+                        Spacer()
+
+                        if userSession.currentUser != nil {
+                            HStack(spacing: 6) {
+                                Image(systemName: "person.crop.circle")
+                                    .foregroundColor(AppTheme.textSecondary)
+                                Text(userSession.username.isEmpty ? "..." : userSession.username)
+                                    .font(.subheadline)
+                                    .foregroundColor(AppTheme.textSecondary)
+                            }
+                        }
+                    }
+                    .padding(.top, 8)
+
+                    Divider().background(AppTheme.divider)
 
                     // MARK: - Recipe Name
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Recipe Name")
                             .font(.headline)
-                            .padding(.top)
+                            .foregroundColor(AppTheme.textPrimary)
                         TextField("Enter recipe name", text: $recipeName)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .textFieldStyle(CustomTextFieldStyle())
                     }
 
                     // MARK: - Base Spirit
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Base Spirit")
                             .font(.headline)
+                            .foregroundColor(AppTheme.textPrimary)
                         Picker("Select Base", selection: $selectedBase) {
                             ForEach(bases, id: \.self) { base in
                                 Text(base).tag(base)
                             }
                         }
                         .pickerStyle(.menu)
+                        .tint(AppTheme.highlight)
                     }
 
                     // MARK: - Style
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Style")
                             .font(.headline)
+                            .foregroundColor(AppTheme.textPrimary)
                         Picker("Select Style", selection: $selectedStyle) {
                             ForEach(styles, id: \.self) { style in
                                 Text(style).tag(style)
                             }
                         }
                         .pickerStyle(.menu)
+                        .tint(AppTheme.highlight)
                     }
 
-                    // MARK: - Flavor Tags
+                    // MARK: - Flavor Chips
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Flavors")
                             .font(.headline)
-
+                            .foregroundColor(AppTheme.textPrimary)
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 8) {
                                 ForEach(flavors, id: \.self) { flavor in
-                                    Button {
-                                        if selectedFlavors.contains(flavor) {
-                                            selectedFlavors.remove(flavor)
-                                        } else {
-                                            selectedFlavors.insert(flavor)
+                                    let isSelected = selectedFlavors.contains(flavor)
+                                    Text(flavor)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 6)
+                                        .background(isSelected ? AppTheme.chipSelected : AppTheme.card)
+                                        .foregroundColor(AppTheme.textPrimary)
+                                        .cornerRadius(10)
+                                        .shadow(color: AppTheme.softShadow, radius: isSelected ? 3 : 0, y: 1)
+                                        .onTapGesture {
+                                            if isSelected {
+                                                selectedFlavors.remove(flavor)
+                                            } else {
+                                                selectedFlavors.insert(flavor)
+                                            }
                                         }
-                                    } label: {
-                                        Text(flavor)
-                                            .padding(.horizontal, 12)
-                                            .padding(.vertical, 6)
-                                            .background(selectedFlavors.contains(flavor)
-                                                        ? Color.orange
-                                                        : Color.gray.opacity(0.2))
-                                            .foregroundColor(selectedFlavors.contains(flavor) ? .white : .black)
-                                            .cornerRadius(12)
-                                    }
                                 }
                             }
                             .padding(.vertical, 5)
@@ -106,30 +134,27 @@ struct CreateNew: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Ingredients")
                             .font(.headline)
+                            .foregroundColor(AppTheme.textPrimary)
 
                         ForEach($recipeIngredients) { $ingredient in
                             HStack {
-                                // Ingredient name
                                 TextField("Ingredient", text: $ingredient.name)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .textFieldStyle(CustomTextFieldStyle())
 
-                                // Quick pick menu
                                 Menu {
                                     ForEach(ingredientsList, id: \.self) { ing in
                                         Button(ing) { ingredient.name = ing }
                                     }
                                 } label: {
                                     Image(systemName: "chevron.down.circle")
-                                        .foregroundColor(.blue)
+                                        .foregroundColor(AppTheme.highlight)
                                 }
 
-                                // Amount
                                 TextField("Amt", value: $ingredient.amount, format: .number)
                                     .keyboardType(.decimalPad)
                                     .frame(width: 55)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .textFieldStyle(CustomTextFieldStyle())
 
-                                // Unit
                                 Picker("Unit", selection: $ingredient.unit) {
                                     ForEach(units, id: \.self) { unit in
                                         Text(unit).tag(unit)
@@ -138,24 +163,22 @@ struct CreateNew: View {
                                 .pickerStyle(.menu)
                                 .frame(width: 70)
 
-                                // Delete button
                                 Button {
                                     if let index = recipeIngredients.firstIndex(where: { $0.id == ingredient.id }) {
                                         recipeIngredients.remove(at: index)
                                     }
                                 } label: {
                                     Image(systemName: "minus.circle.fill")
-                                        .foregroundColor(.gray)
+                                        .foregroundColor(AppTheme.textSecondary)
                                 }
                             }
                         }
 
-                        // Add new ingredient row
                         Button {
                             recipeIngredients.append(Ingredient(name: "", amount: 0.0, unit: "oz"))
                         } label: {
                             Label("Add Ingredient", systemImage: "plus.circle.fill")
-                                .foregroundColor(.orange)
+                                .foregroundColor(AppTheme.highlight)
                         }
                         .padding(.top, 4)
                     }
@@ -164,12 +187,13 @@ struct CreateNew: View {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Steps")
                             .font(.headline)
+                            .foregroundColor(AppTheme.textPrimary)
                         TextEditor(text: $instructions)
                             .frame(height: 120)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                            )
+                            .scrollContentBackground(.hidden)
+                            .background(AppTheme.card)
+                            .cornerRadius(8)
+                            .shadow(color: AppTheme.softShadow, radius: 2, y: 1)
                     }
 
                     // MARK: - Save Button
@@ -177,16 +201,19 @@ struct CreateNew: View {
                         saveNewRecipe()
                     } label: {
                         Text("Save Recipe")
+                            .font(.headline)
+                            .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.orange)
-                            .foregroundColor(.white)
+                            .background(AppTheme.highlight)
                             .cornerRadius(12)
+                            .shadow(color: AppTheme.softShadow, radius: 3, y: 2)
                     }
                     .padding(.vertical)
                 }
                 .padding(.horizontal)
             }
+            .background(AppTheme.background.ignoresSafeArea())
         }
     }
 
@@ -212,8 +239,22 @@ struct CreateNew: View {
     }
 }
 
+// MARK: - Custom TextField Style
+struct CustomTextFieldStyle: TextFieldStyle {
+    func _body(configuration: TextField<Self._Label>) -> some View {
+        configuration
+            .padding(10)
+            .background(AppTheme.card)
+            .cornerRadius(8)
+            .shadow(color: AppTheme.softShadow, radius: 1, y: 1)
+            .foregroundColor(AppTheme.textPrimary)
+    }
+}
+
+
 // MARK: - Preview
 #Preview {
     CreateNew()
         .environmentObject(RecipeStore())
+        .environmentObject(UserSession())
 }
