@@ -1,0 +1,142 @@
+[
+  {
+    "id": "espresso_martini_classic",
+    "popularity_rank": 1,
+    "external_rank": 8,
+    "name": "Espresso Martini",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "mai_tai_classic",
+    "popularity_rank": 2,
+    "external_rank": 11,
+    "name": "Mai Tai",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "manhattan_classic",
+    "popularity_rank": 3,
+    "external_rank": 12,
+    "name": "Manhattan",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "paloma_classic",
+    "popularity_rank": 4,
+    "external_rank": 14,
+    "name": "Paloma",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "daiquiri-classic",
+    "popularity_rank": 5,
+    "external_rank": 16,
+    "name": "Daiquiri",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "whiskey_sour_classic",
+    "popularity_rank": 6,
+    "external_rank": 17,
+    "name": "Whiskey Sour",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "negroni_classic",
+    "popularity_rank": 7,
+    "external_rank": 18,
+    "name": "Negroni",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "cosmopolitan_classic",
+    "popularity_rank": 8,
+    "external_rank": 21,
+    "name": "Cosmopolitan",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "old_fashioned_classic",
+    "popularity_rank": 9,
+    "external_rank": 24,
+    "name": "Old Fashioned",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "french_75_classic",
+    "popularity_rank": 10,
+    "external_rank": 28,
+    "name": "French 75",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "clover_club_classic",
+    "popularity_rank": 11,
+    "external_rank": 31,
+    "name": "Clover Club",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "singapore_sling_classic",
+    "popularity_rank": 12,
+    "external_rank": 37,
+    "name": "Singapore Sling",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "zombie_classic",
+    "popularity_rank": 13,
+    "external_rank": 49,
+    "name": "Zombie",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "caipirinha_classic",
+    "popularity_rank": 14,
+    "external_rank": 52,
+    "name": "Caipirinha",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "pina_colada_classic",
+    "popularity_rank": 15,
+    "external_rank": 56,
+    "name": "Piña Colada",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "sidecar_classic",
+    "popularity_rank": 16,
+    "external_rank": 60,
+    "name": "Sidecar",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "mojito_classic",
+    "popularity_rank": 17,
+    "external_rank": 63,
+    "name": "Mojito",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "moscow_mule_classic",
+    "popularity_rank": 18,
+    "external_rank": 69,
+    "name": "Moscow Mule",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "white_russian_classic",
+    "popularity_rank": 19,
+    "external_rank": 91,
+    "name": "White Russian",
+    "source": "diffords_top100"
+  },
+  {
+    "id": "bloody_mary_classic",
+    "popularity_rank": 20,
+    "external_rank": 93,
+    "name": "Bloody Mary",
+    "source": "diffords_top100"
+  }
+]
