@@ -136,17 +136,17 @@ Firebase integration
 Logic Layer (CocktailCore Package)
 
 Contains:
-
+```text
 CocktailCore/
- ├── Models/
- ├── Data/  
- │    ├── Recipes JSON  
- │    ├── Cocktail Images  
- │    ├── cocktail_popularity.json  
- ├── PopularityLoader  
- ├── ImageLoader  
- ├── Vector similarity logic  
- └── Recipe ordering data (VectorOrders)
+├── Models/
+├── Data/
+│   ├── Recipes JSON
+│   ├── Cocktail Images
+│   └── cocktail_popularity.json
+├── PopularityLoader
+├── ImageLoader
+├── Vector similarity logic
+└── Recipe ordering data (VectorOrders)
 
 The package is reusable and cleanly separated from UI logic.
 
@@ -247,3 +247,4 @@ Contact: (your email or GitHub profile)
 🥂 License
 
 MIT License — free to use, modify, and distribute.
+
