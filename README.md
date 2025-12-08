@@ -232,20 +232,9 @@ Seasonal collections
 
 Push notifications for weekly trending cocktails
 
-👩🏻‍💻 Author
-
-Sola Lhim / Allyson McGuire
-
-iOS Developer
-
-Master's student in Computer Science (CSUF)
-
-Passionate about UI/UX, data-driven features, and clean architecture
-
-Contact: (your email or GitHub profile)
-
 🥂 License
 
 MIT License — free to use, modify, and distribute.
+
 
 
