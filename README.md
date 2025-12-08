@@ -147,7 +147,7 @@ CocktailCore/
 ├── ImageLoader
 ├── Vector similarity logic
 └── Recipe ordering data (VectorOrders)
-
+```
 The package is reusable and cleanly separated from UI logic.
 
 🔧 Tech Stack
@@ -174,7 +174,7 @@ Automated matching + JSON generation
 SPM resource bundles
 
 🗂 Folder Structure
-
+```text
 Cocktail-Library/
  ├── Views/
  ├── Components/
@@ -192,7 +192,7 @@ CocktailCore/
  ├── PopularityLoader.swift
  ├── ImageLoader.swift
  └── Vector logic
-
+```
 🚀 Running the App
 1. Clone the repository
 git clone https://github.com/solalhim/Cocktail-Library.git
@@ -247,4 +247,5 @@ Contact: (your email or GitHub profile)
 🥂 License
 
 MIT License — free to use, modify, and distribute.
+
 
