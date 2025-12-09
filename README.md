@@ -1,4 +1,4 @@
-🍸 Cocktail Library
+<h1>🍸 Cocktail Library</h1>
 
 A personalized cocktail recipe app built with SwiftUI and powered by a modular logic engine.
 
@@ -232,9 +232,11 @@ Seasonal collections
 
 Push notifications for weekly trending cocktails
 
+
 🥂 License
 
 MIT License — free to use, modify, and distribute.
+
 
 
 
