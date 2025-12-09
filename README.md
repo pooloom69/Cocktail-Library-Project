@@ -19,6 +19,10 @@ Popular cocktail rankings sourced from web data
 
 The app is structured using a dedicated Swift Package (CocktailCore) that contains all cocktail data, vector logic, popularity rankings, and embedded image resources.
 
+<h2>Demo</h2>
+[presentation ](https://adcsuf-my.sharepoint.com/:p:/r/personal/pooloom069_csu_fullerton_edu/Documents/Presentation%20cpsc362.pptx?d=w724e1bd217b94e2b90dd5ea7cfe6030f&csf=1&web=1&e=8xiL83)
+
+
 🌿 Features
 🔍 Search & Browse Recipes
 
@@ -236,6 +240,7 @@ Push notifications for weekly trending cocktails
 🥂 License
 
 MIT License — free to use, modify, and distribute.
+
 
 
 
